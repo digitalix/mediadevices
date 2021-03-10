@@ -1,6 +1,8 @@
 package opus
 
 import (
+	"time"
+
 	"github.com/pion/mediadevices/pkg/codec"
 	"github.com/pion/mediadevices/pkg/io/audio"
 	"github.com/pion/mediadevices/pkg/prop"
@@ -16,12 +18,18 @@ type Params struct {
 
 // NewParams returns default opus codec specific parameters.
 func NewParams() (Params, error) {
-	return Params{}, nil
+	return Params{
+		BaseParams: codec.BaseParams{
+			Latency: 20 * time.Millisecond,
+		},
+	}, nil
 }
 
 // RTPCodec represents the codec metadata
 func (p *Params) RTPCodec() *codec.RTPCodec {
-	return codec.NewRTPOpusCodec(48000)
+	c := codec.NewRTPOpusCodec(48000)
+	c.Latency = p.Latency
+	return c
 }
 
 // BuildAudioEncoder builds opus encoder with given params

@@ -37,10 +37,6 @@ func newEncoder(r audio.Reader, p prop.Media, params Params) (codec.ReadCloser, 
 		return nil, fmt.Errorf("opus: inProp.SampleRate is required")
 	}
 
-	if p.Latency == 0 {
-		p.Latency = 20
-	}
-
 	if params.BitRate == 0 {
 		params.BitRate = 32000
 	}
@@ -51,8 +47,7 @@ func newEncoder(r audio.Reader, p prop.Media, params Params) (codec.ReadCloser, 
 
 	// Select the nearest supported latency
 	var targetLatency float64
-	// TODO: use p.Latency.Milliseconds() after Go 1.12 EOL
-	latencyInMS := float64(p.Latency.Nanoseconds() / 1000000)
+	latencyInMS := float64(params.Latency.Nanoseconds() / 1000000)
 	nearestDist := math.Inf(+1)
 	for _, latency := range latencies {
 		dist := math.Abs(latency - latencyInMS)
